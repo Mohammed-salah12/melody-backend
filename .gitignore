@@ -1,0 +1,5 @@
+node_modules/
+.env
+dataset/
+# trained model files are large; keep them out of git (copy them to the server)
+ml-model/*.onnx

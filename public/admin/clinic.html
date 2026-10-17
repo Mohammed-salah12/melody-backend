@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Melody Admin — Clinic</title>
+<style>
+  :root { --brown:#693D32; --brick:#9D3E1D; --bg:#FFF9F4; --line:#EADFDA; --muted:#6b6560; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: -apple-system, system-ui, "Segoe UI", sans-serif; background:var(--bg); color:#252B37; }
+  header { display:flex; align-items:center; gap:16px; padding:14px 24px; background:#fff; border-bottom:1px solid var(--line); position:sticky; top:0; z-index:5; }
+  header h1 { font-size:18px; margin:0; color:var(--brown); }
+  header .sp { flex:1; }
+  main { max-width:1180px; margin:0 auto; padding:20px 24px 60px; }
+  button, .btn { font:inherit; border:0; border-radius:10px; padding:9px 14px; cursor:pointer; background:var(--brown); color:#fff; }
+  button.ghost { background:transparent; color:var(--brown); border:1px solid var(--line); }
+  button.danger { background:#b42318; }
+  button:disabled { opacity:.5; cursor:default; }
+  input, select, textarea { font:inherit; padding:9px 11px; border:1px solid var(--line); border-radius:10px; background:#fff; width:100%; }
+  textarea { min-height:70px; resize:vertical; }
+  .toolbar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+  .toolbar input { max-width:280px; }
+  .toolbar select { max-width:180px; }
+  table { width:100%; border-collapse:collapse; background:#fff; border-radius:14px; overflow:hidden; box-shadow:0 4px 14px rgba(105,61,50,.07); }
+  th, td { text-align:left; padding:10px 12px; border-bottom:1px solid var(--line); font-size:14px; vertical-align:middle; }
+  th { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); background:#FCF7F4; }
+  td img, .thumb { width:44px; height:44px; border-radius:8px; object-fit:cover; background:#F3E7E1; display:block; }
+  .tag { display:inline-block; padding:2px 8px; border-radius:999px; background:#F6EAE5; color:var(--brick); font-size:12px; margin:1px; }
+  .off { color:#b42318; font-weight:600; }
+  .muted { color:var(--muted); font-size:13px; }
+  .pager { display:flex; gap:10px; align-items:center; justify-content:flex-end; margin-top:12px; }
+  dialog { border:0; border-radius:18px; padding:0; width:min(760px, 96vw); box-shadow:0 20px 50px rgba(0,0,0,.25); }
+  dialog form { padding:22px; }
+  dialog h2 { margin:0 0 14px; color:var(--brown); }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .grid .full { grid-column:1/-1; }
+  label { font-size:12px; color:var(--muted); display:block; margin-bottom:4px; text-transform:uppercase; letter-spacing:.05em; }
+  .checks { display:flex; flex-wrap:wrap; gap:8px; }
+  .checks label { text-transform:none; letter-spacing:0; font-size:14px; color:#252B37; display:flex; gap:6px; align-items:center; border:1px solid var(--line); padding:6px 10px; border-radius:999px; margin:0; }
+  .checks input { width:auto; }
+  .actions { display:flex; gap:10px; justify-content:flex-end; margin-top:18px; }
+  #login { max-width:360px; margin:12vh auto; background:#fff; padding:26px; border-radius:18px; box-shadow:0 10px 30px rgba(105,61,50,.12); display:grid; gap:12px; }
+  #login h1 { margin:0; color:var(--brown); font-size:22px; }
+  .err { color:#b42318; font-size:14px; min-height:18px; }
+  .hidden { display:none !important; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Clinic</h1>
+  <a href="/admin/" class="muted">Products</a>
+  <a href="/admin/grading.html" class="muted">Grade scans</a>
+  <span class="sp"></span>
+  <span id="who" class="muted"></span>
+</header>
+<main style="padding:20px 24px; display:grid; gap:28px;">
+  <p id="needlogin" class="muted hidden">Please log in on the <a href="/admin/">Products page</a> first (admin account).</p>
+
+  <section>
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
+      <h2 style="margin:0; color:var(--brown); font-size:18px;">Live consultations</h2>
+      <span class="muted">Chat requests wait 3 minutes for a doctor to accept · video calls open 10 min before · refreshes every 5 s</span>
+    </div>
+    <table><thead><tr><th>Requested</th><th>Patient</th><th>Doctor</th><th>Status</th><th></th></tr></thead><tbody id="chats"></tbody></table>
+  </section>
+
+  <section>
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
+      <h2 style="margin:0; color:var(--brown); font-size:18px;">Doctors</h2>
+      <span class="sp" style="flex:1"></span>
+      <button id="newDoc">Add doctor</button>
+    </div>
+    <table><thead><tr><th></th><th>Doctor</th><th>Specialties</th><th>Hours</th><th>Status now</th><th></th></tr></thead><tbody id="docs"></tbody></table>
+  </section>
+
+  <section>
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
+      <h2 style="margin:0; color:var(--brown); font-size:18px;">Consultations</h2>
+      <select id="astatus" style="width:auto"><option value="booked">Booked</option><option value="completed">Completed</option><option value="">All</option></select>
+    </div>
+    <table><thead><tr><th>When</th><th>Patient</th><th>Doctor</th><th>Type</th><th>Status</th><th></th></tr></thead><tbody id="appts"></tbody></table>
+  </section>
+</main>
+
+<dialog id="docDlg">
+  <form id="docForm" method="dialog">
+    <h2 id="docTitle">Doctor</h2>
+    <div class="grid2" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+      <div><label>Name</label><input name="name" required placeholder="Dr. Eleanor Vance" /></div>
+      <div><label>Title</label><input name="title" value="Dermatologist" /></div>
+      <div style="grid-column:1/3"><label>Bio</label><input name="bio" placeholder="Expert in treating dry and sensitive skin" /></div>
+      <div style="grid-column:1/3"><label>About (doctor page)</label><textarea name="about" rows="4" placeholder="Education, experience, approach…"></textarea></div>
+      <div style="grid-column:1/3"><label>Extra expertise (comma separated)</label><input name="expertise" placeholder="Clinical Dermatology, Laser Therapy" /></div>
+      <div><label>Years of experience</label><input name="yearsExperience" type="number" min="0" value="5" /></div>
+      <div><label>Rating</label><p class="muted" style="margin:6px 0">From patient reviews (after completed consultations)</p></div>
+      <div><label>Start hour</label><input name="startHour" type="number" min="0" max="23" value="9" /></div>
+      <div><label>End hour (exclusive)</label><input name="endHour" type="number" min="1" max="24" value="21" /></div>
+      <div style="grid-column:1/3"><label>Working days</label><div class="checks" id="days" style="display:flex; flex-wrap:wrap; gap:6px"></div></div>
+      <div style="grid-column:1/3"><label>Specialties</label><div class="checks" id="specs" style="display:flex; flex-wrap:wrap; gap:6px"></div></div>
+      <div style="grid-column:1/3"><label>Consultation types</label><div class="checks" style="display:flex; gap:6px"><label><input type="checkbox" name="video" checked style="width:auto" /> Video</label><label><input type="checkbox" name="chat" checked style="width:auto" /> Chat</label></div></div>
+      <div style="grid-column:1/3"><label>Photo</label><input type="file" id="docFile" accept="image/jpeg,image/png,image/webp" /></div>
+    </div>
+    <p id="docErr" style="color:#C8102E"></p>
+    <div style="display:flex; gap:8px; justify-content:flex-end"><button type="button" class="ghost" id="docCancel">Cancel</button><button id="docSave">Save</button></div>
+  </form>
+</dialog>
+
+<dialog id="doneDlg">
+  <form id="doneForm" method="dialog">
+    <h2>Complete consultation</h2>
+    <p id="doneWho" class="muted"></p>
+    <label>Clinical summary (the patient sees this in their Clinical Archive)</label>
+    <textarea name="summary" rows="6" required></textarea>
+    <label style="margin-top:12px">Protocol update — one product per line (optionally "name — note")</label>
+    <textarea name="protocol" rows="3" placeholder="Barrier Repair Rich Cream — morning and evening"></textarea>
+    <label style="margin-top:12px">Duration (minutes)</label>
+    <input name="duration" type="number" min="5" max="180" value="45" />
+    <p id="doneErr" style="color:#C8102E"></p>
+    <div style="display:flex; gap:8px; justify-content:flex-end"><button type="button" class="ghost" id="doneCancel">Cancel</button><button>Save & complete</button></div>
+  </form>
+</dialog>
+
+<script src="clinic.js"></script>
+</body>
+</html>

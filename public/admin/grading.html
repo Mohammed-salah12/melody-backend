@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Melody Admin — Grade scans</title>
+<style>
+  :root { --brown:#693D32; --brick:#9D3E1D; --bg:#FFF9F4; --line:#EADFDA; --muted:#6b6560; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: -apple-system, system-ui, "Segoe UI", sans-serif; background:var(--bg); color:#252B37; }
+  header { display:flex; align-items:center; gap:16px; padding:14px 24px; background:#fff; border-bottom:1px solid var(--line); }
+  header h1 { font-size:18px; margin:0; color:var(--brown); }
+  header .sp { flex:1; }
+  a { color: var(--brick); }
+  main { max-width:1000px; margin:0 auto; padding:20px 24px 60px; }
+  .stats { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+  .stat { background:#fff; border:1px solid var(--line); border-radius:12px; padding:10px 14px; font-size:13px; }
+  .stat b { display:block; font-size:20px; color:var(--brown); }
+  .card { display:grid; grid-template-columns: 340px 1fr; gap:24px; background:#fff; border-radius:16px; padding:20px; box-shadow:0 4px 14px rgba(105,61,50,.07); }
+  .card img { width:340px; height:340px; object-fit:cover; border-radius:12px; background:#F3E7E1; }
+  .row { display:grid; grid-template-columns: 130px 1fr 40px; align-items:center; gap:10px; margin:6px 0; }
+  .row label { font-size:14px; font-weight:600; }
+  .row small { color:var(--muted); font-size:11px; display:block; font-weight:400; }
+  .scale { display:flex; gap:6px; }
+  .scale button { width:38px; height:34px; border-radius:9px; border:1px solid var(--line); background:#fff; cursor:pointer; font:inherit; }
+  .scale button.on { background:var(--brown); color:#fff; border-color:var(--brown); }
+  .tone button { width:44px; }
+  .actions { display:flex; gap:10px; margin-top:16px; }
+  .btn { font:inherit; border:0; border-radius:10px; padding:10px 16px; cursor:pointer; background:var(--brown); color:#fff; }
+  .btn.ghost { background:transparent; color:var(--brown); border:1px solid var(--line); }
+  .muted { color:var(--muted); font-size:13px; }
+  .rule { color:var(--muted); font-size:12px; text-align:right; }
+  .hidden { display:none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Grade scans for the skin model</h1>
+  <span class="sp"></span>
+  <a href="/admin/clinic.html">Clinic</a>
+  <a href="/admin/">Products</a>
+</header>
+<main>
+  <p id="needlogin" class="muted hidden">Please log in on the <a href="/admin/">Products page</a> first (admin account).</p>
+  <p class="muted">Photos shared by users who opted in. Grade what you <b>see</b>, 1 = none / very low, 5 = very strong (for hydration: 1 = very dry, 5 = very well hydrated). Two doctors grading the same photo makes the labels more reliable. Mark blurry, filtered or heavily made-up photos as unusable.</p>
+  <div class="stats" id="stats"></div>
+  <div id="empty" class="muted hidden">Nothing left to grade — thank you! New photos appear as users scan.</div>
+  <div class="card hidden" id="card">
+    <div>
+      <img id="photo" alt="Scan photo" />
+      <p class="muted" id="meta"></p>
+    </div>
+    <div>
+      <div id="rows"></div>
+      <div class="row" style="margin-top:14px"><label>Skin tone<small>Fitzpatrick I–VI</small></label><div class="scale tone" id="tone"></div><span></span></div>
+      <div class="actions">
+        <button class="btn" id="save">Save & next</button>
+        <button class="btn ghost" id="skip">Skip</button>
+        <button class="btn ghost" id="bad">Unusable photo</button>
+      </div>
+      <p class="muted" id="err"></p>
+    </div>
+  </div>
+</main>
+<script src="grading.js"></script>
+</body>
+</html>

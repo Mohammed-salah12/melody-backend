@@ -1,0 +1,7 @@
+{"_e":"root:init","_t":1792004964499,"format":"v0-jsonl","version":"57.0.29"}
+{"_e":"env:mode","_t":1792004964500,"nodeEnv":"development","babelEnv":"development","mode":"development"}
+{"_e":"env:load","_t":1792004964501,"mode":"development","files":["../../../.env"],"env":{"FIXED_OTP":"00000","JWT_SECRET":"d751d9578055a86bd072578ff6790a3b1a726719ec40135a3db48e6f5a74d6cd563a7eabff43fc9e22e095b1af96b7ec","MONGODB_URI":"mongodb+srv://techfrompalestine_db_user:BsPvnJtKI3fgdXrQ@cluster0.21sy624.mongodb.net/melody-beauty?retryWrites=true&w=majority&appName=Cluster0","PORT":"4000"}}
+{"_e":"devserver:start","_t":1792004964695,"mode":"development","web":true,"baseUrl":"","asyncRoutes":false,"routerRoot":"../../../app","serverComponents":false,"serverActions":false,"serverRendering":false,"apiRoutes":false,"exporting":false}
+{"_e":"metro:config","_t":1792004964961,"serverRoot":"../../..","projectRoot":"../../..","exporting":false,"flags":{"autolinkingModuleResolution":false,"serverActions":false,"serverComponents":false,"reactCompiler":false,"optimizeGraph":false,"treeshaking":false,"logbox":false}}
+{"_e":"expo:dev-tools-plugin:load","_t":1792004965102,"plugins":[]}
+{"_e":"metro:instantiate","_t":1792004965357,"atlas":false,"workers":6,"host":"::","port":8081}

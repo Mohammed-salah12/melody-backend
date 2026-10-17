@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Melody Admin — Products</title>
+<style>
+  :root { --brown:#693D32; --brick:#9D3E1D; --bg:#FFF9F4; --line:#EADFDA; --muted:#6b6560; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: -apple-system, system-ui, "Segoe UI", sans-serif; background:var(--bg); color:#252B37; }
+  header { display:flex; align-items:center; gap:16px; padding:14px 24px; background:#fff; border-bottom:1px solid var(--line); position:sticky; top:0; z-index:5; }
+  header h1 { font-size:18px; margin:0; color:var(--brown); }
+  header .sp { flex:1; }
+  main { max-width:1180px; margin:0 auto; padding:20px 24px 60px; }
+  button, .btn { font:inherit; border:0; border-radius:10px; padding:9px 14px; cursor:pointer; background:var(--brown); color:#fff; }
+  button.ghost { background:transparent; color:var(--brown); border:1px solid var(--line); }
+  button.danger { background:#b42318; }
+  button:disabled { opacity:.5; cursor:default; }
+  input, select, textarea { font:inherit; padding:9px 11px; border:1px solid var(--line); border-radius:10px; background:#fff; width:100%; }
+  textarea { min-height:70px; resize:vertical; }
+  .toolbar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+  .toolbar input { max-width:280px; }
+  .toolbar select { max-width:180px; }
+  table { width:100%; border-collapse:collapse; background:#fff; border-radius:14px; overflow:hidden; box-shadow:0 4px 14px rgba(105,61,50,.07); }
+  th, td { text-align:left; padding:10px 12px; border-bottom:1px solid var(--line); font-size:14px; vertical-align:middle; }
+  th { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); background:#FCF7F4; }
+  td img, .thumb { width:44px; height:44px; border-radius:8px; object-fit:cover; background:#F3E7E1; display:block; }
+  .tag { display:inline-block; padding:2px 8px; border-radius:999px; background:#F6EAE5; color:var(--brick); font-size:12px; margin:1px; }
+  .off { color:#b42318; font-weight:600; }
+  .muted { color:var(--muted); font-size:13px; }
+  .pager { display:flex; gap:10px; align-items:center; justify-content:flex-end; margin-top:12px; }
+  dialog { border:0; border-radius:18px; padding:0; width:min(760px, 96vw); box-shadow:0 20px 50px rgba(0,0,0,.25); }
+  dialog form { padding:22px; }
+  dialog h2 { margin:0 0 14px; color:var(--brown); }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .grid .full { grid-column:1/-1; }
+  label { font-size:12px; color:var(--muted); display:block; margin-bottom:4px; text-transform:uppercase; letter-spacing:.05em; }
+  .checks { display:flex; flex-wrap:wrap; gap:8px; }
+  .checks label { text-transform:none; letter-spacing:0; font-size:14px; color:#252B37; display:flex; gap:6px; align-items:center; border:1px solid var(--line); padding:6px 10px; border-radius:999px; margin:0; }
+  .checks input { width:auto; }
+  .actions { display:flex; gap:10px; justify-content:flex-end; margin-top:18px; }
+  #login { max-width:360px; margin:12vh auto; background:#fff; padding:26px; border-radius:18px; box-shadow:0 10px 30px rgba(105,61,50,.12); display:grid; gap:12px; }
+  #login h1 { margin:0; color:var(--brown); font-size:22px; }
+  .err { color:#b42318; font-size:14px; min-height:18px; }
+  .hidden { display:none !important; }
+</style>
+</head>
+<body>
+  <form id="login" class="hidden">
+    <h1>Melody Admin</h1>
+    <p class="muted">Log in with an admin account.</p>
+    <input id="lphone" placeholder="Phone number" autocomplete="username" />
+    <input id="lpass" type="password" placeholder="Password" autocomplete="current-password" />
+    <div class="err" id="lerr"></div>
+    <button>Log in</button>
+  </form>
+
+  <div id="app" class="hidden">
+    <header>
+      <h1>Products</h1>
+      <a href="/admin/clinic.html" class="muted">Clinic (doctors &amp; consultations)</a>
+      <span class="muted" id="who"></span>
+      <span class="sp"></span>
+      <button id="new">+ Add product</button>
+      <button class="ghost" id="logout">Log out</button>
+    </header>
+    <main>
+      <div class="toolbar">
+        <input id="q" placeholder="Search name, brand, ingredient…" />
+        <select id="fcat"><option value="">All categories</option></select>
+        <select id="fstatus"><option value="active">Visible</option><option value="all">Visible + hidden</option></select>
+        <span class="muted" id="count"></span>
+      </div>
+      <table>
+        <thead><tr><th></th><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Targets</th><th></th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="pager"><button class="ghost" id="prev">‹ Prev</button><span id="pageinfo" class="muted"></span><button class="ghost" id="next">Next ›</button></div>
+    </main>
+  </div>
+
+  <dialog id="dlg">
+    <form id="form" method="dialog">
+      <h2 id="dtitle">Add product</h2>
+      <div class="grid">
+        <div><label>Name</label><input name="name" required /></div>
+        <div><label>Brand</label><input name="brand" required /></div>
+        <div><label>Category</label><select name="category" required></select></div>
+        <div><label>Routine</label><select name="routine"><option>both</option><option>morning</option><option>evening</option></select></div>
+        <div><label>Price</label><input name="price" type="number" step="0.01" min="0" required /></div>
+        <div><label>Sale % (0 = no offer)</label><input name="salePercent" type="number" step="1" min="0" max="90" value="0" /></div>
+        <div><label>Currency</label><input name="currency" value="USD" maxlength="3" /></div>
+        <div><label>Size</label><input name="size" placeholder="50 ml" /></div>
+        <div><label>Stock</label><input name="stock" type="number" min="0" value="0" /></div>
+        <div class="full"><label>Description</label><textarea name="description"></textarea></div>
+        <div class="full"><label>Ingredients — paste the full list from the pack (INCI), or just the key actives, comma separated. Add % when known (“niacinamide 10%”).</label><textarea name="ingredients" rows="3" placeholder="Aqua, Glycerin, Niacinamide 10%, Zinc PCA, Panthenol, Sodium Hyaluronate, …"></textarea></div>
+        <div class="full" id="matchPreview" style="border:1px solid var(--line); border-radius:12px; padding:10px 12px; background:#FFFCFA; font-size:13px">
+          <b style="color:var(--brown)">How the app will match this product</b>
+          <div id="mpBody" class="muted" style="margin-top:6px">Type or paste ingredients to see what the matcher understands.</div>
+        </div>
+        <div class="full"><label>Skin types (none = all)</label><div class="checks" id="skinTypes"></div></div>
+        <div class="full"><label>Made for (concerns)</label><div class="checks" id="concerns"></div></div>
+        <div class="full"><label>Flags</label><div class="checks">
+          <label><input type="checkbox" name="fragranceFree" /> Fragrance free</label>
+          <label><input type="checkbox" name="nonComedogenic" /> Non-comedogenic</label>
+          <label><input type="checkbox" name="active" checked /> Visible in app</label>
+        </div></div>
+        <div><label>Badges (comma separated)</label><input name="badges" placeholder="New, 15% off" /></div>
+        <div><label>Image URL (optional)</label><input name="imageUrl" placeholder="https://…" /></div>
+        <div class="full"><label>Upload photo</label><input type="file" id="file" accept="image/jpeg,image/png,image/webp" /></div>
+      </div>
+      <div class="err" id="ferr"></div>
+      <div class="actions">
+        <button type="button" class="ghost" id="cancel">Cancel</button>
+        <button id="save">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Melody — Consultation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="consult.css" />
+</head>
+<body>
+<div class="app" id="app">
+  <header class="top" id="top">
+    <button class="icon-btn x" id="endBtn" aria-label="End consultation"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <div class="avatar" id="pAvatar">?<span class="dot" id="pDot"></span></div>
+    <div class="who"><div class="name" id="pName">Patient</div><div class="role" id="pRole"></div></div>
+    <div class="timer" id="timer" hidden><svg viewBox="0 0 24 24" class="fill"><path d="M9 1h6v2H9zM12 4a9 9 0 1 0 0 18 9 9 0 0 0 0-18zm1 9.6V8h-2v6.4l4.2 2.5 1-1.7z"/></svg><span id="timerText">00:00</span></div>
+  </header>
+
+  <div class="banner" id="callBanner" hidden>
+    <span id="callBannerText">Video consultation</span>
+    <button id="joinBtn">Join video call</button>
+  </div>
+
+  <main class="log" id="log"><div class="empty" id="empty">Loading…</div></main>
+
+  <nav class="rail" aria-label="Tools">
+    <button class="rail-btn active" data-tab="chat" aria-label="Chat"><svg viewBox="0 0 24 24" class="fill"><path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8l-4 4V5a1 1 0 0 1 1-1z"/></svg></button>
+    <button class="rail-btn" data-tab="report" aria-label="Skin report"><svg viewBox="0 0 24 24"><path d="M14 3H7a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V7z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></svg></button>
+    <button class="rail-btn" data-tab="protocol" aria-label="Clinical protocol"><svg viewBox="0 0 24 24"><rect x="3.5" y="7" width="17" height="13" rx="1.5"/><path d="M9 7V4.5h6V7M12 10.5v6M9 13.5h6"/></svg></button>
+  </nav>
+
+  <section class="sheet" id="sheet-protocol" hidden>
+    <div class="eyebrow">CLINICAL PROTOCOL</div>
+    <h2>Suggested Treatment</h2>
+    <p class="muted small" id="protoSub"></p>
+    <div class="carousel" id="protoList"></div>
+  </section>
+
+  <section class="sheet" id="sheet-report" hidden>
+    <div class="eyebrow">PATIENT DATA</div>
+    <h2>Skin Report</h2>
+    <div id="reportBody"></div>
+  </section>
+
+  <div class="typing-row" id="typingRow" hidden><span class="typing"><i></i><i></i><i></i></span></div>
+
+  <div class="menu" id="menu" hidden>
+    <button data-pick="image"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-9 8"/></svg>Photo</button>
+    <button data-pick="file"><svg viewBox="0 0 24 24"><path d="M14 3H7a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V7z"/><path d="M14 3v4h4"/></svg>Import File</button>
+    <button data-pick="voice"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>Voice note</button>
+  </div>
+
+  <footer class="composer" id="composer">
+    <div class="rec-row" id="recRow" hidden>
+      <span class="rec-time" id="recTime">0:00</span>
+      <span class="levels" id="levels"></span>
+      <span class="rec"><i></i>REC</span>
+    </div>
+    <form class="pill" id="form">
+      <button type="button" class="grey" id="plusBtn" aria-label="Attach"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+      <input id="input" placeholder="Message..." autocomplete="off" maxlength="2000" />
+      <span class="rec-label" id="recLabel" hidden>RECORDING VOICE NOTE…</span>
+      <button type="submit" class="send" id="sendBtn" aria-label="Send"><svg viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-2-6z"/></svg></button>
+    </form>
+    <div class="closed" id="closed" hidden></div>
+  </footer>
+
+  <!-- video call -->
+  <section class="call" id="call" hidden>
+    <video id="remoteVideo" autoplay playsinline></video>
+    <div class="call-wait" id="callWait">Waiting for the patient to join…</div>
+    <div id="remoteAudio" hidden></div>
+    <header class="call-top">
+      <div class="avatar" id="cAvatar">?<span class="dot"></span></div>
+      <div class="who"><div class="name" id="cName">Patient</div><div class="role" id="cRole"></div></div>
+      <div class="timer"><svg viewBox="0 0 24 24" class="fill"><path d="M9 1h6v2H9zM12 4a9 9 0 1 0 0 18 9 9 0 0 0 0-18zm1 9.6V8h-2v6.4l4.2 2.5 1-1.7z"/></svg><span id="cTimer">00:00</span></div>
+    </header>
+    <div class="pip">
+      <video id="localVideo" autoplay playsinline muted></video>
+      <button class="flip" id="flipBtn" aria-label="Switch camera"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><path d="M9 13a3 3 0 0 1 5.2-2M15 13a3 3 0 0 1-5.2 2M14 9.5v1.7h-1.7M10 16.5v-1.7h1.7"/></svg></button>
+    </div>
+    <div class="controls">
+      <button class="c-btn grey" id="moreBtn" aria-label="Open chat"><svg viewBox="0 0 24 24" class="fill"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+      <button class="c-btn" id="camBtn" aria-label="Turn camera off"><svg viewBox="0 0 24 24" class="fill"><path d="M3 7h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1zm14 4l5-3v8l-5-3z"/></svg></button>
+      <button class="c-btn" id="spkBtn" aria-label="Mute patient's sound"><svg viewBox="0 0 24 24"><path class="fill" d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg></button>
+      <button class="c-btn" id="micBtn" aria-label="Mute microphone"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3" class="fill"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+      <button class="c-btn hang" id="hangBtn" aria-label="Leave call"><svg viewBox="0 0 24 24" class="fill"><path d="M12 9c-3.6 0-6.9 1.2-9.3 3.3-.5.4-.6 1.1-.2 1.6l1.6 2c.4.5 1 .6 1.6.3l2.6-1.3c.5-.3.8-.8.7-1.4l-.3-1.8c1.6-.6 3.3-.9 5.3-.9s3.7.3 5.3.9l-.3 1.8c-.1.6.2 1.1.7 1.4l2.6 1.3c.6.3 1.2.2 1.6-.3l1.6-2c.4-.5.3-1.2-.2-1.6C18.9 10.2 15.6 9 12 9z"/></svg></button>
+    </div>
+  </section>
+
+  <div class="viewer" id="viewer" hidden><img id="viewerImg" alt="" /></div>
+  <div class="toast" id="toast" hidden></div>
+</div>
+
+<dialog id="endDlg">
+  <h3>End consultation?</h3>
+  <p class="muted">The patient can’t send more messages. Then write the clinical summary with <b>Complete</b> on the clinic page.</p>
+  <div class="row"><button class="ghost" id="endCancel">Cancel</button><button id="endOk">End consultation</button></div>
+</dialog>
+
+<input type="file" id="fileImage" accept="image/jpeg,image/png,image/webp" hidden />
+<input type="file" id="fileDoc" accept="application/pdf,image/jpeg,image/png,image/webp,text/plain" hidden />
+<script src="/vendor/livekit-client.umd.js"></script>
+<script src="consult.js"></script>
+</body>
+</html>
