@@ -3,3 +3,4 @@ node_modules/
 dataset/
 # trained model files are large; keep them out of git (copy them to the server)
 ml-model/*.onnx
+.expo/

@@ -71,6 +71,8 @@ async function start() {
   try {
     await mongoose.connect(config.mongoUri, { serverSelectionTimeoutMS: 10000 });
     console.log('MongoDB connected');
+    // first deploy: fill sample products / doctors and the clinic login (only what is missing)
+    await require('./lib/auto-seed').autoSeed();
   } catch (e) {
     console.error('\nCould not connect to MongoDB:', e.message);
     console.error('Check MONGODB_URI in .env and that your IP is allowed in Atlas → Network Access.\n');

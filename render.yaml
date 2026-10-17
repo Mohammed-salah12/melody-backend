@@ -1,0 +1,36 @@
+# Render Blueprint — New → Blueprint → pick this repo. Render asks for the values marked `sync: false`.
+services:
+  - type: web
+    name: melody-backend
+    runtime: node
+    plan: starter # free also works, but it sleeps after 15 min (first request then takes ~50 s)
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      # keep "development" until an SMS provider and a payment provider are connected
+      - key: NODE_ENV
+        value: development
+      - key: FIXED_OTP
+        sync: false
+      # first start creates the clinic / doctor login from these (only if it doesn't exist yet)
+      - key: STAFF_PHONE
+        sync: false
+      - key: STAFF_NAME
+        value: Clinic Admin
+      - key: STAFF_PASSWORD
+        sync: false
+      # sample products + doctors on first start (only when empty); set to "off" to disable
+      - key: AUTO_SEED
+        value: "on"
+      - key: LIVEKIT_URL
+        sync: false
+      - key: LIVEKIT_API_KEY
+        sync: false
+      - key: LIVEKIT_API_SECRET
+        sync: false
